@@ -371,12 +371,28 @@ final object Json {
   final def fromDouble(value: Double): Option[Json] = if (isReal(value)) Some(JNumber(JsonDouble(value))) else None
 
   /**
+   * Try to create a `Json` value representing a JSON number from a `Float`.
+   *
+   * The result is empty if the argument cannot be represented as a JSON number.
+   */
+  final def fromFloat(value: Float): Option[Json] = if (isReal(value)) Some(JNumber(JsonFloat(value))) else None
+
+  /**
    * Create a `Json` value representing a JSON number or null from a `Double`.
    *
    * The result is a JSON null if the argument cannot be represented as a JSON
    * number.
    */
   final def fromDoubleOrNull(value: Double): Json = if (isReal(value)) JNumber(JsonDouble(value)) else Null
+
+  /**
+   * Create a `Json` value representing a JSON number or null from a `Float`.
+   *
+   * The result is a JSON null if the argument cannot be represented as a JSON
+   * number.
+   */
+  final def fromFloatOrNull(value: Float): Json =
+    if (isReal(value)) JNumber(JsonFloat(value)) else Null
 
   /**
    * Create a `Json` value representing a JSON number or string from a `Double`.
@@ -386,6 +402,15 @@ final object Json {
    */
   final def fromDoubleOrString(value: Double): Json =
     if (isReal(value)) JNumber(JsonDouble(value)) else fromString(value.toString)
+
+  /**
+   * Create a `Json` value representing a JSON number or string from a `Float`.
+   *
+   * The result is a JSON string if the argument cannot be represented as a JSON
+   * number.
+   */
+  final def fromFloatOrString(value: Float): Json =
+    if (isReal(value)) JNumber(JsonFloat(value)) else fromString(value.toString)
 
   /**
    * Create a `Json` value representing a JSON number from a `BigInt`.
@@ -400,6 +425,10 @@ final object Json {
   private[this] def isReal(value: Double): Boolean =
     // .isNaN and .isInfinity box, we explicitly avoid that here
     (!java.lang.Double.isNaN(value)) && (!java.lang.Double.isInfinite(value))
+
+  private[this] def isReal(value: Float): Boolean =
+    // .isNaN and .isInfinity box, we explicitly avoid that here
+    (!java.lang.Float.isNaN(value)) && (!java.lang.Float.isInfinite(value))
 
   private[this] final def arrayEq(x: Seq[Json], y: Seq[Json]): Boolean = {
     val it0 = x.iterator
